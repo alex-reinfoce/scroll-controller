@@ -1,1 +1,6 @@
-export const add = (a: number, b: number) => a + b;
+export default class ScrollController {
+  constructor(private container: HTMLElement) {
+    this.container = container;
+    console.log(this.container);
+  }
+} 
