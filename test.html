@@ -4,33 +4,415 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>AI Chat Simulator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 600px;
+      height: 70vh;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background: #4a5568;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: #f7fafc;
+    }
+
+    .message {
+      margin-bottom: 16px;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message.user {
+      text-align: right;
+    }
+
+    .message.ai {
+      text-align: left;
+    }
+
+    .message-bubble {
+      display: inline-block;
+      max-width: 80%;
+      padding: 12px 16px;
+      border-radius: 18px;
+      word-wrap: break-word;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .message.user .message-bubble {
+      background: #4299e1;
+      color: white;
+    }
+
+    .message.ai .message-bubble {
+      background: #e2e8f0;
+      color: #2d3748;
+      border: 1px solid #cbd5e0;
+    }
+
+    .typing-indicator {
+      display: none;
+      align-items: center;
+      margin-bottom: 16px;
+      min-height: 40px;
+      padding-left: 0;
+    }
+
+    .typing-indicator.active {
+      display: flex;
+    }
+
+    .typing-dots {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 36px;
+      background: #e2e8f0;
+      border-radius: 18px;
+      padding: 10px 12px;
+      margin-left: 0;
+      border: 1px solid #cbd5e0;
+    }
+
+    .typing-dots span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #a0aec0;
+      margin: 0 2px;
+      animation: typing 1.4s infinite ease-in-out;
+    }
+
+    .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes typing {
+      0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+      }
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .chat-input {
+      padding: 20px;
+      background: white;
+      border-top: 1px solid #e2e8f0;
+      text-align: center;
+    }
+
+    .send-btn {
+      background: linear-gradient(135deg, #4299e1, #3182ce);
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(66, 153, 225, 0.4);
+    }
+
+    .send-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(66, 153, 225, 0.6);
+    }
+
+    .send-btn:active {
+      transform: translateY(0);
+    }
+
+    .send-btn:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .stop-btn {
+      background: linear-gradient(135deg, #e53e3e, #c53030);
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(229, 62, 62, 0.4);
+      margin-left: 10px;
+    }
+
+    .stop-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(229, 62, 62, 0.6);
+    }
+
+    .stop-btn:active {
+      transform: translateY(0);
+    }
+
+    .streaming-text {
+      position: relative;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 14px;
+      background: #4299e1;
+      margin-left: 2px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+  </style>
 </head>
 
 <body>
-  <div id="scroll-container" style="height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 20px;">
-    <div style="height: 500px;">
-      <h1>Scroll Container</h1>
-      <p>This is a scrollable container. Scroll down to see more content.</p>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-      <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-      <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-      <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-      <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-      <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-      <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-      <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-      <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-      <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-      <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  <div class="chat-container">
+    <div class="chat-header">
+      AI Chat Simulator
+    </div>
+    
+    <div class="chat-messages" id="chatMessages">
+      <div class="message ai">
+        <div class="message-bubble">
+          👋 你好！我是AI助手，点击下方按钮开始聊天吧！
+        </div>
+      </div>
+    </div>
+
+    <div class="typing-indicator" id="typingIndicator">
+      <div class="typing-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <button class="send-btn" id="sendBtn" onclick="startChat()">
+        发起聊天
+      </button>
+      <button class="stop-btn" id="stopBtn" onclick="stopChat()" style="display: none;">
+        停止输出
+      </button>
     </div>
   </div>
 
-  <script type="module">
-    import ScrollController from './dist/index.mjs';
-    const container = document.getElementById('scroll-container');
-    new ScrollController(container);
+  <script>
+    const chatMessages = document.getElementById('chatMessages');
+    const typingIndicator = document.getElementById('typingIndicator');
+    const sendBtn = document.getElementById('sendBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    
+    // 状态管理变量
+    let currentStreamInterval = null;
+    let isStreaming = false;
+
+    // 生成随机字符串
+    function generateRandomString(length) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789，。！？；：""（）【】《》、—…　';
+      const chineseChars = '的一是在了不和有大这主中人上为们地个用工时要动国产以我到他会作来分生对于学下级就年阶义发成部民可出能方进同行面说种过命度革而多子后自社加小机也经力线本电高量长党得实家定深法表着水理化争现所二起政三好十战无农使性前等反体合斗路图把结第里正新开论之物从当两些还天资事队批如应形想制心样干都向变关点育重其思与间内去因件日利相由压员气业代全组数果期导平各基或月毛然如应形想制心样干都';
+      
+      let result = '';
+      const allChars = chars + chineseChars;
+      
+      for (let i = 0; i < length; i++) {
+        result += allChars.charAt(Math.floor(Math.random() * allChars.length));
+      }
+      return result;
+    }
+
+    // 添加消息到聊天区域
+    function addMessage(content, isUser = false) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
+      
+      const bubbleDiv = document.createElement('div');
+      bubbleDiv.className = 'message-bubble';
+      bubbleDiv.textContent = content;
+      
+      messageDiv.appendChild(bubbleDiv);
+      chatMessages.appendChild(messageDiv);
+      
+      // 滚动到底部
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // 模拟流式输出
+    function simulateStreamResponse(content) {
+      return new Promise((resolve) => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message ai';
+        
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = 'message-bubble streaming-text';
+        
+        messageDiv.appendChild(bubbleDiv);
+        chatMessages.appendChild(messageDiv);
+        
+        let currentText = '';
+        let index = 0;
+        
+        // 添加光标
+        const cursor = document.createElement('span');
+        cursor.className = 'cursor';
+        bubbleDiv.appendChild(cursor);
+        
+        isStreaming = true;
+        currentStreamInterval = setInterval(() => {
+          if (index < content.length && isStreaming) {
+            // 随机决定每次添加的字符数量（1-3个字符）
+            const charsToAdd = Math.min(
+              Math.floor(Math.random() * 3) + 1,
+              content.length - index
+            );
+            
+            currentText += content.slice(index, index + charsToAdd);
+            index += charsToAdd;
+            
+            bubbleDiv.textContent = currentText;
+            bubbleDiv.appendChild(cursor);
+            
+            // 滚动到底部
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          } else {
+            // 移除光标
+            cursor.remove();
+            clearInterval(currentStreamInterval);
+            currentStreamInterval = null;
+            isStreaming = false;
+            
+            // 隐藏停止按钮，显示继续聊天按钮
+            stopBtn.style.display = 'none';
+            sendBtn.disabled = false;
+            sendBtn.textContent = '继续聊天';
+            sendBtn.style.display = 'inline-block';
+            
+            resolve();
+          }
+        }, Math.random() * 100 + 50); // 随机间隔 50-150ms
+      });
+    }
+
+    // 显示打字指示器
+    function showTypingIndicator() {
+      typingIndicator.classList.add('active');
+      chatMessages.appendChild(typingIndicator);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // 隐藏打字指示器
+    function hideTypingIndicator() {
+      typingIndicator.classList.remove('active');
+    }
+
+    // 开始聊天
+    async function startChat() {
+      // 禁用发送按钮，显示停止按钮
+      sendBtn.disabled = true;
+      sendBtn.textContent = '发送中...';
+      sendBtn.style.display = 'none';
+      stopBtn.style.display = 'inline-block';
+      
+      // 生成随机用户消息
+      const userMessage = generateRandomString(Math.floor(Math.random() * 50) + 10);
+      addMessage(userMessage, true);
+      
+      // 显示打字指示器
+      setTimeout(() => {
+        showTypingIndicator();
+        
+        // 模拟思考时间
+        setTimeout(async () => {
+          hideTypingIndicator();
+          
+          // 生成随机AI回复
+          const aiResponseLength = Math.floor(Math.random() * 950) + 50; // 50-1000
+          const aiResponse = generateRandomString(aiResponseLength);
+          
+          // 模拟流式输出
+          await simulateStreamResponse(aiResponse);
+          
+        }, Math.random() * 2000 + 1000); // 1-3秒思考时间
+        
+      }, 500);
+    }
+
+    // 停止聊天
+    function stopChat() {
+      // 停止流式输出
+      isStreaming = false;
+      if (currentStreamInterval) {
+        clearInterval(currentStreamInterval);
+        currentStreamInterval = null;
+      }
+      
+      // 隐藏打字指示器
+      hideTypingIndicator();
+      
+      // 重新显示发送按钮，隐藏停止按钮
+      stopBtn.style.display = 'none';
+      sendBtn.style.display = 'inline-block';
+      sendBtn.disabled = false;
+      sendBtn.textContent = '继续聊天';
+    }
   </script>
 </body>
 

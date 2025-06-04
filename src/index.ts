@@ -1,6 +1,6 @@
-export default class ScrollController {
+export default class SmoothScrollController {
   constructor(private container: HTMLElement) {
     this.container = container;
-    console.log(this.container);
+    console.log(2);
   }
 } 

@@ -30,9 +30,7 @@
   ],
   "scripts": {
     "build": "unbuild",
-    "start": "npm run start:dev",
-    "start:dev": "esno watch src/index.ts",
-    "start:prod": "pnpm install && pnpm build && node dist/index.mjs",
+    "start": "onchange 'src/**/*.ts' -- npm run build",
     "test": "vitest",
     "typecheck": "tsc --noEmit"
   },
@@ -41,6 +39,7 @@
     "@types/node": "^20.12.7",
     "bumpp": "^9.4.0",
     "esno": "^4.7.0",
+    "onchange": "^7.1.0",
     "pnpm": "^9.0.2",
     "rimraf": "^5.0.5",
     "simple-git-hooks": "^2.11.1",
