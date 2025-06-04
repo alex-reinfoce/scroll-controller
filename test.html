@@ -280,7 +280,9 @@
     const typingIndicator = document.getElementById('typingIndicator');
     const sendBtn = document.getElementById('sendBtn');
     const stopBtn = document.getElementById('stopBtn');
-    const scrollController = new SmoothScrollController(chatMessages);
+    const scrollController = new SmoothScrollController({
+      container: chatMessages
+    });
 
     // 状态管理变量
     let currentStreamInterval = null;
