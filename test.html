@@ -60,6 +60,7 @@
         opacity: 0;
         transform: translateY(10px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -130,14 +131,23 @@
       animation: typing 1.4s infinite ease-in-out;
     }
 
-    .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
-    .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+    .typing-dots span:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+
+    .typing-dots span:nth-child(2) {
+      animation-delay: -0.16s;
+    }
 
     @keyframes typing {
-      0%, 80%, 100% {
+
+      0%,
+      80%,
+      100% {
         transform: scale(0.8);
         opacity: 0.5;
       }
+
       40% {
         transform: scale(1);
         opacity: 1;
@@ -217,8 +227,16 @@
     }
 
     @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0; }
+
+      0%,
+      50% {
+        opacity: 1;
+      }
+
+      51%,
+      100% {
+        opacity: 0;
+      }
     }
   </style>
 </head>
@@ -228,7 +246,7 @@
     <div class="chat-header">
       AI Chat Simulator
     </div>
-    
+
     <div class="chat-messages" id="chatMessages">
       <div class="message ai">
         <div class="message-bubble">
@@ -246,21 +264,24 @@
     </div>
 
     <div class="chat-input">
-      <button class="send-btn" id="sendBtn" onclick="startChat()">
+      <button class="send-btn" id="sendBtn">
         发起聊天
       </button>
-      <button class="stop-btn" id="stopBtn" onclick="stopChat()" style="display: none;">
+      <button class="stop-btn" id="stopBtn" style="display: none;">
         停止输出
       </button>
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import SmoothScrollController from './dist/index.mjs';
+
     const chatMessages = document.getElementById('chatMessages');
     const typingIndicator = document.getElementById('typingIndicator');
     const sendBtn = document.getElementById('sendBtn');
     const stopBtn = document.getElementById('stopBtn');
-    
+    const scrollController = new SmoothScrollController(chatMessages);
+
     // 状态管理变量
     let currentStreamInterval = null;
     let isStreaming = false;
@@ -269,10 +290,10 @@
     function generateRandomString(length) {
       const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789，。！？；：""（）【】《》、—…　';
       const chineseChars = '的一是在了不和有大这主中人上为们地个用工时要动国产以我到他会作来分生对于学下级就年阶义发成部民可出能方进同行面说种过命度革而多子后自社加小机也经力线本电高量长党得实家定深法表着水理化争现所二起政三好十战无农使性前等反体合斗路图把结第里正新开论之物从当两些还天资事队批如应形想制心样干都向变关点育重其思与间内去因件日利相由压员气业代全组数果期导平各基或月毛然如应形想制心样干都';
-      
+
       let result = '';
       const allChars = chars + chineseChars;
-      
+
       for (let i = 0; i < length; i++) {
         result += allChars.charAt(Math.floor(Math.random() * allChars.length));
       }
@@ -283,16 +304,16 @@
     function addMessage(content, isUser = false) {
       const messageDiv = document.createElement('div');
       messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
-      
+
       const bubbleDiv = document.createElement('div');
       bubbleDiv.className = 'message-bubble';
       bubbleDiv.textContent = content;
-      
+
       messageDiv.appendChild(bubbleDiv);
       chatMessages.appendChild(messageDiv);
-      
+
       // 滚动到底部
-      chatMessages.scrollTop = chatMessages.scrollHeight;
+      scrollController.settleDown();
     }
 
     // 模拟流式输出
@@ -300,51 +321,51 @@
       return new Promise((resolve) => {
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message ai';
-        
+
         const bubbleDiv = document.createElement('div');
         bubbleDiv.className = 'message-bubble streaming-text';
-        
+
         messageDiv.appendChild(bubbleDiv);
         chatMessages.appendChild(messageDiv);
-        
+
         let currentText = '';
         let index = 0;
-        
+
         // 添加光标
         const cursor = document.createElement('span');
         cursor.className = 'cursor';
         bubbleDiv.appendChild(cursor);
-        
+
         isStreaming = true;
         currentStreamInterval = setInterval(() => {
           if (index < content.length && isStreaming) {
             // 随机决定每次添加的字符数量（1-3个字符）
             const charsToAdd = Math.min(
-              Math.floor(Math.random() * 3) + 1,
+              Math.floor(Math.random() * 100) + 1,
               content.length - index
             );
-            
+
             currentText += content.slice(index, index + charsToAdd);
             index += charsToAdd;
-            
+
             bubbleDiv.textContent = currentText;
             bubbleDiv.appendChild(cursor);
-            
+
             // 滚动到底部
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            scrollController.settleDown();
           } else {
             // 移除光标
             cursor.remove();
             clearInterval(currentStreamInterval);
             currentStreamInterval = null;
             isStreaming = false;
-            
+
             // 隐藏停止按钮，显示继续聊天按钮
             stopBtn.style.display = 'none';
             sendBtn.disabled = false;
             sendBtn.textContent = '继续聊天';
             sendBtn.style.display = 'inline-block';
-            
+
             resolve();
           }
         }, Math.random() * 100 + 50); // 随机间隔 50-150ms
@@ -355,7 +376,7 @@
     function showTypingIndicator() {
       typingIndicator.classList.add('active');
       chatMessages.appendChild(typingIndicator);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
+      scrollController.settleDown();
     }
 
     // 隐藏打字指示器
@@ -370,30 +391,31 @@
       sendBtn.textContent = '发送中...';
       sendBtn.style.display = 'none';
       stopBtn.style.display = 'inline-block';
-      
+
       // 生成随机用户消息
       const userMessage = generateRandomString(Math.floor(Math.random() * 50) + 10);
       addMessage(userMessage, true);
-      
+
       // 显示打字指示器
       setTimeout(() => {
         showTypingIndicator();
-        
+
         // 模拟思考时间
         setTimeout(async () => {
           hideTypingIndicator();
-          
+
           // 生成随机AI回复
-          const aiResponseLength = Math.floor(Math.random() * 950) + 50; // 50-1000
+          const aiResponseLength = Math.floor(Math.random() * 9500) + 50; // 50-10000
           const aiResponse = generateRandomString(aiResponseLength);
-          
+
           // 模拟流式输出
           await simulateStreamResponse(aiResponse);
-          
+
         }, Math.random() * 2000 + 1000); // 1-3秒思考时间
-        
+
       }, 500);
     }
+    sendBtn.onclick = startChat;
 
     // 停止聊天
     function stopChat() {
@@ -403,16 +425,17 @@
         clearInterval(currentStreamInterval);
         currentStreamInterval = null;
       }
-      
+
       // 隐藏打字指示器
       hideTypingIndicator();
-      
+
       // 重新显示发送按钮，隐藏停止按钮
       stopBtn.style.display = 'none';
       sendBtn.style.display = 'inline-block';
       sendBtn.disabled = false;
       sendBtn.textContent = '继续聊天';
     }
+    stopBtn.onclick = stopChat;
   </script>
 </body>
 

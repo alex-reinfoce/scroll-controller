@@ -1,6 +1,8 @@
 export default class SmoothScrollController {
   constructor(private container: HTMLElement) {
     this.container = container;
-    console.log(2);
+  }
+  public settleDown() {
+    console.log(1)
   }
 } 
