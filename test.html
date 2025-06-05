@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Chat Simulator</title>
+  <!-- Add marked library for Markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -25,7 +27,7 @@
     .chat-container {
       width: 100%;
       max-width: 600px;
-      height: 70vh;
+      height: 50vh;
       background: white;
       border-radius: 12px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -94,6 +96,122 @@
       background: #e2e8f0;
       color: #2d3748;
       border: 1px solid #cbd5e0;
+    }
+
+    /* Markdown styling inside message bubbles */
+    .message-bubble h1,
+    .message-bubble h2,
+    .message-bubble h3,
+    .message-bubble h4,
+    .message-bubble h5,
+    .message-bubble h6 {
+      margin: 8px 0 4px 0;
+      font-weight: 600;
+    }
+
+    .message-bubble h1 {
+      font-size: 18px;
+    }
+
+    .message-bubble h2 {
+      font-size: 16px;
+    }
+
+    .message-bubble h3 {
+      font-size: 15px;
+    }
+
+    .message-bubble h4,
+    .message-bubble h5,
+    .message-bubble h6 {
+      font-size: 14px;
+    }
+
+    .message-bubble p {
+      margin: 4px 0;
+    }
+
+    .message-bubble p:first-child {
+      margin-top: 0;
+    }
+
+    .message-bubble p:last-child {
+      margin-bottom: 0;
+    }
+
+    .message-bubble ul,
+    .message-bubble ol {
+      margin: 8px 0;
+      padding-left: 20px;
+    }
+
+    .message-bubble li {
+      margin: 2px 0;
+    }
+
+    .message-bubble blockquote {
+      border-left: 3px solid #4299e1;
+      margin: 8px 0;
+      padding-left: 12px;
+      font-style: italic;
+      color: #666;
+    }
+
+    .message-bubble code {
+      background: #f1f5f9;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+
+    .message-bubble pre {
+      background: #f1f5f9;
+      padding: 8px;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin: 8px 0;
+    }
+
+    .message-bubble pre code {
+      background: none;
+      padding: 0;
+    }
+
+    .message-bubble strong {
+      font-weight: 600;
+    }
+
+    .message-bubble em {
+      font-style: italic;
+    }
+
+    .message-bubble a {
+      color: #4299e1;
+      text-decoration: none;
+    }
+
+    .message-bubble a:hover {
+      text-decoration: underline;
+    }
+
+    .message-bubble table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 8px 0;
+      font-size: 12px;
+    }
+
+    .message-bubble th,
+    .message-bubble td {
+      border: 1px solid #cbd5e0;
+      padding: 4px 8px;
+      text-align: left;
+    }
+
+    .message-bubble th {
+      background: #f7fafc;
+      font-weight: 600;
     }
 
     .typing-indicator {
@@ -216,41 +334,19 @@
     .streaming-text {
       position: relative;
     }
-
-    .cursor {
-      display: inline-block;
-      width: 2px;
-      height: 14px;
-      background: #4299e1;
-      margin-left: 2px;
-      animation: blink 1s infinite;
-    }
-
-    @keyframes blink {
-
-      0%,
-      50% {
-        opacity: 1;
-      }
-
-      51%,
-      100% {
-        opacity: 0;
-      }
-    }
   </style>
 </head>
 
 <body>
   <div class="chat-container">
     <div class="chat-header">
-      AI Chat Simulator
+      AI Chat Simulator with Markdown
     </div>
 
     <div class="chat-messages" id="chatMessages">
       <div class="message ai">
         <div class="message-bubble">
-          👋 你好！我是AI助手，点击下方按钮开始聊天吧！
+          👋 你好！我是AI助手，支持 <strong>Markdown</strong> 格式输出，点击下方按钮开始聊天吧！
         </div>
       </div>
     </div>
@@ -288,28 +384,141 @@
     let currentStreamInterval = null;
     let isStreaming = false;
 
-    // 生成随机字符串
-    function generateRandomString(length) {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789，。！？；：""（）【】《》、—…　';
-      const chineseChars = '的一是在了不和有大这主中人上为们地个用工时要动国产以我到他会作来分生对于学下级就年阶义发成部民可出能方进同行面说种过命度革而多子后自社加小机也经力线本电高量长党得实家定深法表着水理化争现所二起政三好十战无农使性前等反体合斗路图把结第里正新开论之物从当两些还天资事队批如应形想制心样干都向变关点育重其思与间内去因件日利相由压员气业代全组数果期导平各基或月毛然如应形想制心样干都';
+    // 生成随机 Markdown 内容
+    function generateRandomMarkdown() {
+      const markdownTemplates = [
+        // 标题 + 列表
+        () => `# ${getRandomText(3, 8)}
 
-      let result = '';
-      const allChars = chars + chineseChars;
+${getRandomText(20, 40)}
 
-      for (let i = 0; i < length; i++) {
-        result += allChars.charAt(Math.floor(Math.random() * allChars.length));
+## ${getRandomText(3, 6)}
+
+- ${getRandomText(5, 15)}
+- ${getRandomText(5, 15)}
+- ${getRandomText(5, 15)}
+
+${getRandomText(15, 30)}`,
+
+        // 代码块
+        () => `${getRandomText(10, 20)}
+
+\`\`\`javascript
+function ${getRandomText(1, 2)}() {
+  const ${getRandomText(1, 2)} = "${getRandomText(3, 8)}";
+  return ${getRandomText(1, 2)}.${getRandomText(1, 2)}();
+}
+\`\`\`
+
+${getRandomText(15, 25)}`,
+
+        // 引用 + 强调
+        () => `${getRandomText(10, 20)}
+
+> ${getRandomText(15, 30)}
+> 
+> **${getRandomText(3, 8)}** - ${getRandomText(5, 15)}
+
+${getRandomText(10, 20)} \`${getRandomText(2, 5)}\` ${getRandomText(5, 15)}
+
+*${getRandomText(8, 15)}* **${getRandomText(3, 8)}** ${getRandomText(10, 20)}`,
+
+        // 表格
+        () => `${getRandomText(10, 20)}
+
+| ${getRandomText(2, 4)} | ${getRandomText(2, 4)} | ${getRandomText(2, 4)} |
+|---|---|---|
+| ${getRandomText(3, 8)} | ${getRandomText(3, 8)} | ${getRandomText(3, 8)} |
+| ${getRandomText(3, 8)} | ${getRandomText(3, 8)} | ${getRandomText(3, 8)} |
+| ${getRandomText(3, 8)} | ${getRandomText(3, 8)} | ${getRandomText(3, 8)} |
+
+${getRandomText(15, 25)}`,
+
+        // 混合格式
+        () => `## ${getRandomText(3, 6)}
+
+${getRandomText(15, 25)}
+
+### ${getRandomText(2, 5)}
+
+1. **${getRandomText(3, 6)}**: ${getRandomText(8, 15)}
+2. *${getRandomText(3, 6)}*: ${getRandomText(8, 15)}
+3. ${getRandomText(3, 6)}: \`${getRandomText(2, 4)}\`
+
+${getRandomText(20, 35)}
+
+> 💡 **${getRandomText(2, 4)}**: ${getRandomText(10, 20)}`,
+
+        // 链接 + 图片语法
+        () => `${getRandomText(10, 15)}
+
+[${getRandomText(3, 8)}](https://example.com) ${getRandomText(5, 15)}
+
+![${getRandomText(2, 5)}](https://via.placeholder.com/150)
+
+${getRandomText(15, 25)}
+
+---
+
+**${getRandomText(3, 6)}**: ${getRandomText(10, 20)}`
+      ];
+
+      const template = markdownTemplates[Math.floor(Math.random() * markdownTemplates.length)];
+      return template();
+    }
+
+    // 生成随机文本
+    function getRandomText(minWords, maxWords) {
+      const words = [
+        '技术', '开发', '编程', '代码', '函数', '变量', '数据', '算法', '系统', '应用',
+        '项目', '框架', '库', '工具', '平台', '服务', '接口', '数据库', '网络', '安全',
+        '性能', '优化', '测试', '部署', '维护', '文档', '规范', '标准', '流程', '管理',
+        '用户', '体验', '界面', '设计', '功能', '特性', '需求', '分析', '解决', '方案',
+        '实现', '集成', '配置', '环境', '版本', '更新', '修复', '改进', '扩展', '支持'
+      ];
+
+      const wordCount = Math.floor(Math.random() * (maxWords - minWords + 1)) + minWords;
+      const selectedWords = [];
+
+      for (let i = 0; i < wordCount; i++) {
+        selectedWords.push(words[Math.floor(Math.random() * words.length)]);
       }
-      return result;
+
+      return selectedWords.join('');
+    }
+
+    // 生成随机用户消息
+    function generateRandomUserMessage() {
+      const userMessages = [
+        '请帮我解释一下这个概念',
+        '能给我一些代码示例吗？',
+        '这个问题该怎么解决？',
+        '有什么最佳实践建议吗？',
+        '请详细说明一下实现步骤',
+        '能提供一个完整的教程吗？',
+        '这些技术之间有什么区别？',
+        '如何优化性能？',
+        '有哪些常见的错误需要避免？',
+        '推荐一些学习资源'
+      ];
+
+      return userMessages[Math.floor(Math.random() * userMessages.length)];
     }
 
     // 添加消息到聊天区域
-    function addMessage(content, isUser = false) {
+    function addMessage(content, isUser = false, isMarkdown = false) {
       const messageDiv = document.createElement('div');
       messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
 
       const bubbleDiv = document.createElement('div');
       bubbleDiv.className = 'message-bubble';
-      bubbleDiv.textContent = content;
+
+      if (isMarkdown && !isUser) {
+        // 使用 marked 解析 Markdown
+        bubbleDiv.innerHTML = marked.parse(content);
+      } else {
+        bubbleDiv.textContent = content;
+      }
 
       messageDiv.appendChild(bubbleDiv);
       chatMessages.appendChild(messageDiv);
@@ -333,31 +542,36 @@
         let currentText = '';
         let index = 0;
 
-        // 添加光标
-        const cursor = document.createElement('span');
-        cursor.className = 'cursor';
-        bubbleDiv.appendChild(cursor);
-
         isStreaming = true;
         currentStreamInterval = setInterval(() => {
           if (index < content.length && isStreaming) {
-            // 随机决定每次添加的字符数量（1-3个字符）
+            // 随机决定每次添加的字符数量（1-5个字符）
             const charsToAdd = Math.min(
-              Math.floor(Math.random() * 10) + 1,
+              Math.floor(Math.random() * 5) + 1,
               content.length - index
             );
 
             currentText += content.slice(index, index + charsToAdd);
             index += charsToAdd;
 
-            bubbleDiv.textContent = currentText;
-            bubbleDiv.appendChild(cursor);
+            // 实时解析和渲染 Markdown
+            try {
+              bubbleDiv.innerHTML = marked.parse(currentText);
+            } catch {
+              // 如果 Markdown 不完整，回退到纯文本
+              bubbleDiv.textContent = currentText;
+            }
 
             // 滚动到底部
             scrollController.settleDown();
           } else {
-            // 移除光标
-            cursor.remove();
+            // 最终渲染
+            try {
+              bubbleDiv.innerHTML = marked.parse(currentText);
+            } catch {
+              bubbleDiv.textContent = currentText;
+            }
+            
             clearInterval(currentStreamInterval);
             currentStreamInterval = null;
             isStreaming = false;
@@ -370,7 +584,7 @@
 
             resolve();
           }
-        }, Math.random() * 100 + 50); // 随机间隔 50-150ms
+        }, Math.random() * 100 + 30); // 随机间隔 30-130ms
       });
     }
 
@@ -395,7 +609,7 @@
       stopBtn.style.display = 'inline-block';
 
       // 生成随机用户消息
-      const userMessage = generateRandomString(Math.floor(Math.random() * 50) + 10);
+      const userMessage = generateRandomUserMessage();
       addMessage(userMessage, true);
 
       // 显示打字指示器
@@ -406,17 +620,17 @@
         setTimeout(async () => {
           hideTypingIndicator();
 
-          // 生成随机AI回复
-          const aiResponseLength = Math.floor(Math.random() * 9500) + 50; // 50-10000
-          const aiResponse = generateRandomString(aiResponseLength);
+          // 生成随机 Markdown 内容
+          const aiResponse = generateRandomMarkdown();
 
           // 模拟流式输出
           await simulateStreamResponse(aiResponse);
 
-        }, Math.random() * 2000 + 1000); // 1-3秒思考时间
+        }, Math.random() * 1000 + 500);
 
       }, 500);
     }
+
     sendBtn.onclick = startChat;
 
     // 停止聊天
@@ -437,7 +651,13 @@
       sendBtn.disabled = false;
       sendBtn.textContent = '继续聊天';
     }
+
     stopBtn.onclick = stopChat;
+
+    // 初始化时渲染已有的 Markdown 内容
+    document.addEventListener('DOMContentLoaded', () => {
+      // 不需要特殊处理初始消息，因为它已经是HTML格式
+    });
   </script>
 </body>
 
