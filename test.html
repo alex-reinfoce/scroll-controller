@@ -602,6 +602,7 @@ ${getRandomText(15, 25)}
 
     // 开始聊天
     async function startChat() {
+      scrollController.scrollBottomImmediate();
       // 禁用发送按钮，显示停止按钮
       sendBtn.disabled = true;
       sendBtn.textContent = '发送中...';

@@ -22,7 +22,7 @@ export default class SmoothScrollController {
 
   private defaultEasing = (t: number): number => {
     return 1 - Math.pow(1 - t, 3);
-  }
+  };
 
   private isNearBottom(threshold: number = 50): boolean {
     const { scrollTop, scrollHeight, clientHeight } = this.container;
@@ -41,7 +41,7 @@ export default class SmoothScrollController {
 
       this.lastScrollTop = currentScrollTop;
     }
-  }
+  };
 
   private smoothScrollTo(targetScrollTop: number): Promise<void> {
     return new Promise((resolve) => {
@@ -79,14 +79,14 @@ export default class SmoothScrollController {
   }
 
   private bundleEvent() {
-    this.container.addEventListener('scroll', this.onScroll, { passive: true });
+    this.container.addEventListener("scroll", this.onScroll, { passive: true });
   }
 
   constructor(options: SmoothScrollControllerOptions) {
     this.options = options;
 
     if (!this.options.container) {
-      throw new Error('container is required');
+      throw new Error("container is required");
     }
 
     this.userScrollThreshold = this.options.threshold || 100;
@@ -125,6 +125,15 @@ export default class SmoothScrollController {
     this.autoScroll = true;
   }
 
+  public async scrollBottomImmediate(): Promise<void> {
+    const targetScrollTop = this.container.scrollHeight - this.container.clientHeight;
+    this.container.scrollTo({
+      top: targetScrollTop,
+      behavior: "smooth",
+    });
+    this.autoScroll = true;
+  }
+
   public enableAutoScroll(): void {
     this.autoScroll = true;
   }
@@ -141,6 +150,6 @@ export default class SmoothScrollController {
     if (this.scrollAnimationId) {
       cancelAnimationFrame(this.scrollAnimationId);
     }
-    this.container.removeEventListener('scroll', this.onScroll);
+    this.container.removeEventListener("scroll", this.onScroll);
   }
 }
