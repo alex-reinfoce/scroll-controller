@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Chat Simulator</title>
+  <title>Smooth Scroll Controller - AI Chat Demo</title>
   <!-- Add marked library for Markdown parsing -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
@@ -17,7 +17,105 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      height: 100vh;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+    }
+
+    /* Navigation Styles */
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 12px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #2d3748;
+      text-decoration: none;
+    }
+
+    .nav-brand:hover {
+      color: #4299e1;
+    }
+
+    .nav-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #4299e1, #3182ce);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-link {
+      color: #4a5568;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-link:hover {
+      color: #4299e1;
+    }
+
+    .nav-link.github {
+      background: #24292e;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+
+    .nav-link.github:hover {
+      background: #1a1e22;
+      color: white;
+    }
+
+    .nav-version {
+      background: #e2e8f0;
+      color: #4a5568;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -334,40 +432,124 @@
     .streaming-text {
       position: relative;
     }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .nav-container {
+        padding: 0 15px;
+      }
+
+      .nav-brand {
+        font-size: 18px;
+      }
+
+      .nav-brand span {
+        display: none;
+      }
+
+      .nav-links {
+        gap: 12px;
+      }
+
+      .nav-link {
+        font-size: 14px;
+      }
+
+      .nav-link.github {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+
+      .nav-link.github svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      .main-content {
+        padding: 15px;
+      }
+
+      .chat-container {
+        height: 60vh;
+      }
+
+      .chat-header {
+        padding: 15px;
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-version {
+        display: none;
+      }
+
+      .nav-link:not(.github) {
+        display: none;
+      }
+
+      .nav-links {
+        gap: 8px;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <div class="chat-container">
-    <div class="chat-header">
-      AI Chat Simulator with Markdown
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="#" class="nav-brand">
+        <div class="nav-icon">SC</div>
+        <span>Smooth Scroll Controller</span>
+      </a>
+      <div class="nav-links">
+        <span class="nav-version">v0.0.0</span>
+        <a href="#" class="nav-link">演示</a>
+        <a href="https://github.com/alex-reinfoce/smooth-scroll-controller" target="_blank" class="nav-link github">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          GitHub
+        </a>
+      </div>
     </div>
+  </nav>
 
-    <div class="chat-messages" id="chatMessages">
-      <div class="message ai">
-        <div class="message-bubble">
-          👋 你好！我是AI助手，支持 <strong>Markdown</strong> 格式输出，点击下方按钮开始聊天吧！
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="chat-container">
+      <div class="chat-header">
+        Smooth Scroll Controller 演示
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="message ai">
+          <div class="message-bubble">
+            👋 欢迎体验 <strong>Smooth Scroll Controller</strong>！这是一个平滑滚动控制器的演示，支持 <strong>Markdown</strong> 格式输出。点击下方按钮开始聊天，体验自动滚动效果！
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="typing-indicator" id="typingIndicator">
-      <div class="typing-dots">
-        <span></span>
-        <span></span>
-        <span></span>
+      <div class="typing-indicator" id="typingIndicator">
+        <div class="typing-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+
+      <div class="chat-input">
+        <button class="send-btn" id="sendBtn">
+          发起聊天
+        </button>
+        <button class="stop-btn" id="stopBtn" style="display: none;">
+          停止输出
+        </button>
       </div>
     </div>
-
-    <div class="chat-input">
-      <button class="send-btn" id="sendBtn">
-        发起聊天
-      </button>
-      <button class="stop-btn" id="stopBtn" style="display: none;">
-        停止输出
-      </button>
-    </div>
-  </div>
+  </main>
 
   <script type="module">
     import SmoothScrollController from './dist/index.mjs';
@@ -571,7 +753,7 @@ ${getRandomText(15, 25)}
             } catch {
               bubbleDiv.textContent = currentText;
             }
-            
+
             clearInterval(currentStreamInterval);
             currentStreamInterval = null;
             isStreaming = false;
