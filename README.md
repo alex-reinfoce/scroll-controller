@@ -9,6 +9,7 @@ A JavaScript library for smooth scrolling control in web applications.
 
 - Smooth scrolling to specific positions or elements
 - Support for both immediate and animated scrolling
+- Auto-interrupt scrolling: automatically pauses when user manually scrolls up, and resumes when scrolled back to bottom
 - TypeScript support with type definitions
 - No external dependencies
 - Works with any scrollable container
