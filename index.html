@@ -505,7 +505,7 @@
       </a>
       <div class="nav-links">
         <span class="nav-version">v0.0.0</span>
-        <a href="#" class="nav-link">演示</a>
+        <a href="#" class="nav-link">Demo</a>
         <a href="https://github.com/alex-reinfoce/smooth-scroll-controller" target="_blank" class="nav-link github">
           <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path
@@ -521,13 +521,15 @@
   <main class="main-content">
     <div class="chat-container">
       <div class="chat-header">
-        Smooth Scroll Controller 演示
+        Smooth Scroll Controller Demo
       </div>
 
       <div class="chat-messages" id="chatMessages">
         <div class="message ai">
           <div class="message-bubble">
-            👋 欢迎体验 <strong>Smooth Scroll Controller</strong>！这是一个平滑滚动控制器的演示，支持 <strong>Markdown</strong> 格式输出。点击下方按钮开始聊天，体验自动滚动效果！
+            👋 Welcome to the <strong>Smooth Scroll Controller</strong> experience! This is a demo of a pixel-perfect
+            smooth scrolling controller that supports <strong>Markdown</strong> formatted output. Click the button below
+            to start chatting and experience the automatic scrolling effect!
           </div>
         </div>
       </div>
@@ -542,10 +544,10 @@
 
       <div class="chat-input">
         <button class="send-btn" id="sendBtn">
-          发起聊天
+          Start Chat
         </button>
         <button class="stop-btn" id="stopBtn" style="display: none;">
-          停止输出
+          Stop Output
         </button>
       </div>
     </div>
@@ -562,14 +564,14 @@
       container: chatMessages
     });
 
-    // 状态管理变量
+    // State management variables
     let currentStreamInterval = null;
     let isStreaming = false;
 
-    // 生成随机 Markdown 内容
+    // Generate random Markdown content
     function generateRandomMarkdown() {
       const markdownTemplates = [
-        // 标题 + 列表
+        // Title + List
         () => `# ${getRandomText(3, 8)}
 
 ${getRandomText(20, 40)}
@@ -582,7 +584,7 @@ ${getRandomText(20, 40)}
 
 ${getRandomText(15, 30)}`,
 
-        // 代码块
+        // Code block
         () => `${getRandomText(10, 20)}
 
 \`\`\`javascript
@@ -594,7 +596,7 @@ function ${getRandomText(1, 2)}() {
 
 ${getRandomText(15, 25)}`,
 
-        // 引用 + 强调
+        // Quote + Emphasis
         () => `${getRandomText(10, 20)}
 
 > ${getRandomText(15, 30)}
@@ -605,7 +607,7 @@ ${getRandomText(10, 20)} \`${getRandomText(2, 5)}\` ${getRandomText(5, 15)}
 
 *${getRandomText(8, 15)}* **${getRandomText(3, 8)}** ${getRandomText(10, 20)}`,
 
-        // 表格
+        // Table
         () => `${getRandomText(10, 20)}
 
 | ${getRandomText(2, 4)} | ${getRandomText(2, 4)} | ${getRandomText(2, 4)} |
@@ -616,7 +618,7 @@ ${getRandomText(10, 20)} \`${getRandomText(2, 5)}\` ${getRandomText(5, 15)}
 
 ${getRandomText(15, 25)}`,
 
-        // 混合格式
+        // Mixed format
         () => `## ${getRandomText(3, 6)}
 
 ${getRandomText(15, 25)}
@@ -631,7 +633,7 @@ ${getRandomText(20, 35)}
 
 > 💡 **${getRandomText(2, 4)}**: ${getRandomText(10, 20)}`,
 
-        // 链接 + 图片语法
+        // Links + Image syntax
         () => `${getRandomText(10, 15)}
 
 [${getRandomText(3, 8)}](https://example.com) ${getRandomText(5, 15)}
@@ -649,14 +651,14 @@ ${getRandomText(15, 25)}
       return template();
     }
 
-    // 生成随机文本
+    // Generate random text
     function getRandomText(minWords, maxWords) {
       const words = [
-        '技术', '开发', '编程', '代码', '函数', '变量', '数据', '算法', '系统', '应用',
-        '项目', '框架', '库', '工具', '平台', '服务', '接口', '数据库', '网络', '安全',
-        '性能', '优化', '测试', '部署', '维护', '文档', '规范', '标准', '流程', '管理',
-        '用户', '体验', '界面', '设计', '功能', '特性', '需求', '分析', '解决', '方案',
-        '实现', '集成', '配置', '环境', '版本', '更新', '修复', '改进', '扩展', '支持'
+        'technology', 'development', 'programming', 'code', 'function', 'variable', 'data', 'algorithm', 'system', 'application',
+        'project', 'framework', 'library', 'tool', 'platform', 'service', 'interface', 'database', 'network', 'security',
+        'performance', 'optimization', 'testing', 'deployment', 'maintenance', 'documentation', 'specification', 'standard', 'process', 'management',
+        'user', 'experience', 'interface', 'design', 'feature', 'functionality', 'requirement', 'analysis', 'solution', 'approach',
+        'implementation', 'integration', 'configuration', 'environment', 'version', 'update', 'fix', 'improvement', 'extension', 'support'
       ];
 
       const wordCount = Math.floor(Math.random() * (maxWords - minWords + 1)) + minWords;
@@ -666,28 +668,28 @@ ${getRandomText(15, 25)}
         selectedWords.push(words[Math.floor(Math.random() * words.length)]);
       }
 
-      return selectedWords.join('');
+      return selectedWords.join(' ');
     }
 
-    // 生成随机用户消息
+    // Generate random user messages
     function generateRandomUserMessage() {
       const userMessages = [
-        '请帮我解释一下这个概念',
-        '能给我一些代码示例吗？',
-        '这个问题该怎么解决？',
-        '有什么最佳实践建议吗？',
-        '请详细说明一下实现步骤',
-        '能提供一个完整的教程吗？',
-        '这些技术之间有什么区别？',
-        '如何优化性能？',
-        '有哪些常见的错误需要避免？',
-        '推荐一些学习资源'
+        'Can you help me explain this concept?',
+        'Could you provide some code examples?',
+        'How should I solve this problem?',
+        'Do you have any best practice recommendations?',
+        'Please explain the implementation steps in detail',
+        'Can you provide a complete tutorial?',
+        'What are the differences between these technologies?',
+        'How can I optimize performance?',
+        'What are some common mistakes to avoid?',
+        'Recommend some learning resources'
       ];
 
       return userMessages[Math.floor(Math.random() * userMessages.length)];
     }
 
-    // 添加消息到聊天区域
+    // Add message to chat area
     function addMessage(content, isUser = false, isMarkdown = false) {
       const messageDiv = document.createElement('div');
       messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
@@ -696,7 +698,7 @@ ${getRandomText(15, 25)}
       bubbleDiv.className = 'message-bubble';
 
       if (isMarkdown && !isUser) {
-        // 使用 marked 解析 Markdown
+        // Use marked to parse Markdown
         bubbleDiv.innerHTML = marked.parse(content);
       } else {
         bubbleDiv.textContent = content;
@@ -705,11 +707,11 @@ ${getRandomText(15, 25)}
       messageDiv.appendChild(bubbleDiv);
       chatMessages.appendChild(messageDiv);
 
-      // 滚动到底部
+      // Scroll to bottom
       scrollController.settleDown();
     }
 
-    // 模拟流式输出
+    // Simulate streaming response
     function simulateStreamResponse(content) {
       return new Promise((resolve) => {
         const messageDiv = document.createElement('div');
@@ -727,27 +729,27 @@ ${getRandomText(15, 25)}
         isStreaming = true;
         currentStreamInterval = setInterval(() => {
           if (index < content.length && isStreaming) {
-            // 随机决定每次添加的字符数量（1-5个字符）
+            // Randomly decide how many characters to add each time (1-50 characters)
             const charsToAdd = Math.min(
-              Math.floor(Math.random() * 5) + 1,
+              Math.floor(Math.random() * 50) + 1,
               content.length - index
             );
 
             currentText += content.slice(index, index + charsToAdd);
             index += charsToAdd;
 
-            // 实时解析和渲染 Markdown
+            // Real-time parsing and rendering of Markdown
             try {
               bubbleDiv.innerHTML = marked.parse(currentText);
             } catch {
-              // 如果 Markdown 不完整，回退到纯文本
+              // If Markdown is incomplete, fallback to plain text
               bubbleDiv.textContent = currentText;
             }
 
-            // 滚动到底部
+            // Scroll to bottom
             scrollController.settleDown();
           } else {
-            // 最终渲染
+            // Final rendering
             try {
               bubbleDiv.innerHTML = marked.parse(currentText);
             } catch {
@@ -758,55 +760,55 @@ ${getRandomText(15, 25)}
             currentStreamInterval = null;
             isStreaming = false;
 
-            // 隐藏停止按钮，显示继续聊天按钮
+            // Hide stop button, show continue chat button
             stopBtn.style.display = 'none';
             sendBtn.disabled = false;
-            sendBtn.textContent = '继续聊天';
+            sendBtn.textContent = 'Continue Chat';
             sendBtn.style.display = 'inline-block';
 
             resolve();
           }
-        }, Math.random() * 100 + 30); // 随机间隔 30-130ms
+        }, Math.random() * 100 + 30); // Random interval 30-130ms
       });
     }
 
-    // 显示打字指示器
+    // Show typing indicator
     function showTypingIndicator() {
       typingIndicator.classList.add('active');
       chatMessages.appendChild(typingIndicator);
       scrollController.settleDown();
     }
 
-    // 隐藏打字指示器
+    // Hide typing indicator
     function hideTypingIndicator() {
       typingIndicator.classList.remove('active');
     }
 
-    // 开始聊天
+    // Start chat
     async function startChat() {
       scrollController.scrollBottomImmediate();
-      // 禁用发送按钮，显示停止按钮
+      // Disable send button, show stop button
       sendBtn.disabled = true;
-      sendBtn.textContent = '发送中...';
+      sendBtn.textContent = 'Sending...';
       sendBtn.style.display = 'none';
       stopBtn.style.display = 'inline-block';
 
-      // 生成随机用户消息
+      // Generate random user message
       const userMessage = generateRandomUserMessage();
       addMessage(userMessage, true);
 
-      // 显示打字指示器
+      // Show typing indicator
       setTimeout(() => {
         showTypingIndicator();
 
-        // 模拟思考时间
+        // Simulate thinking time
         setTimeout(async () => {
           hideTypingIndicator();
 
-          // 生成随机 Markdown 内容
+          // Generate random Markdown content
           const aiResponse = generateRandomMarkdown();
 
-          // 模拟流式输出
+          // Simulate streaming output
           await simulateStreamResponse(aiResponse);
 
         }, Math.random() * 1000 + 500);
@@ -816,30 +818,30 @@ ${getRandomText(15, 25)}
 
     sendBtn.onclick = startChat;
 
-    // 停止聊天
+    // Stop chat
     function stopChat() {
-      // 停止流式输出
+      // Stop streaming output
       isStreaming = false;
       if (currentStreamInterval) {
         clearInterval(currentStreamInterval);
         currentStreamInterval = null;
       }
 
-      // 隐藏打字指示器
+      // Hide typing indicator
       hideTypingIndicator();
 
-      // 重新显示发送按钮，隐藏停止按钮
+      // Show send button again, hide stop button
       stopBtn.style.display = 'none';
       sendBtn.style.display = 'inline-block';
       sendBtn.disabled = false;
-      sendBtn.textContent = '继续聊天';
+      sendBtn.textContent = 'Continue Chat';
     }
 
     stopBtn.onclick = stopChat;
 
-    // 初始化时渲染已有的 Markdown 内容
+    // Initialize rendering of existing Markdown content
     document.addEventListener('DOMContentLoaded', () => {
-      // 不需要特殊处理初始消息，因为它已经是HTML格式
+      // No special handling needed for initial message as it's already in HTML format
     });
   </script>
 </body>
